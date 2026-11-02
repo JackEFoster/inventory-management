@@ -85,19 +85,19 @@
               <!-- Left: Donut Chart -->
               <div class="order-health-chart">
                 <svg viewBox="0 0 200 200" class="donut-svg-compact">
-                  <circle cx="100" cy="100" r="65" fill="none" stroke="#e2e8f0" stroke-width="25"/>
-                  <circle cx="100" cy="100" r="65" fill="none" stroke="#10b981" stroke-width="25"
+                  <circle cx="100" cy="100" r="65" fill="none" stroke="var(--color-border)" stroke-width="25"/>
+                  <circle cx="100" cy="100" r="65" fill="none" stroke="var(--success-500)" stroke-width="25"
                     :stroke-dasharray="`${getCircleSegment(statusData.delivered)} 408`"
                     stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="65" fill="none" stroke="#3b82f6" stroke-width="25"
+                  <circle cx="100" cy="100" r="65" fill="none" stroke="var(--info-500)" stroke-width="25"
                     :stroke-dasharray="`${getCircleSegment(statusData.shipped)} 408`"
                     :stroke-dashoffset="`-${getCircleSegment(statusData.delivered)}`"
                     transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="65" fill="none" stroke="#f59e0b" stroke-width="25"
+                  <circle cx="100" cy="100" r="65" fill="none" stroke="var(--warning-500)" stroke-width="25"
                     :stroke-dasharray="`${getCircleSegment(statusData.processing)} 408`"
                     :stroke-dashoffset="`-${getCircleSegment(statusData.delivered) + getCircleSegment(statusData.shipped)}`"
                     transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="65" fill="none" stroke="#ef4444" stroke-width="25"
+                  <circle cx="100" cy="100" r="65" fill="none" stroke="var(--danger-500)" stroke-width="25"
                     :stroke-dasharray="`${getCircleSegment(statusData.backordered)} 408`"
                     :stroke-dashoffset="`-${getCircleSegment(statusData.delivered) + getCircleSegment(statusData.shipped) + getCircleSegment(statusData.processing)}`"
                     transform="rotate(-90 100 100)"/>
@@ -105,10 +105,10 @@
                   <text x="100" y="120" text-anchor="middle" class="donut-center-value">{{ orderHealthMetrics.totalOrders }}</text>
                 </svg>
                 <div class="donut-legend-compact">
-                  <div class="legend-item-compact"><span class="legend-dot" style="background: #10b981"></span>{{ t('status.delivered') }}</div>
-                  <div class="legend-item-compact"><span class="legend-dot" style="background: #3b82f6"></span>{{ t('status.shipped') }}</div>
-                  <div class="legend-item-compact"><span class="legend-dot" style="background: #f59e0b"></span>{{ t('status.processing') }}</div>
-                  <div class="legend-item-compact"><span class="legend-dot" style="background: #ef4444"></span>{{ t('status.backordered') }}</div>
+                  <div class="legend-item-compact"><span class="legend-dot" style="background: var(--success-500)"></span>{{ t('status.delivered') }}</div>
+                  <div class="legend-item-compact"><span class="legend-dot" style="background: var(--info-500)"></span>{{ t('status.shipped') }}</div>
+                  <div class="legend-item-compact"><span class="legend-dot" style="background: var(--warning-500)"></span>{{ t('status.processing') }}</div>
+                  <div class="legend-item-compact"><span class="legend-dot" style="background: var(--danger-500)"></span>{{ t('status.backordered') }}</div>
                 </div>
               </div>
 
@@ -199,7 +199,7 @@
                     </span>
                   </td>
                   <td @click="showBacklogDetail(item)" style="cursor: pointer;">
-                    <span :style="{ color: item.days_delayed > 7 ? '#ef4444' : '#f59e0b', fontWeight: 600 }">
+                    <span :style="{ color: item.days_delayed > 7 ? 'var(--danger-600)' : 'var(--warning-600)', fontWeight: 600 }">
                       {{ item.days_delayed }} {{ t('dashboard.inventoryShortages.days') }}
                     </span>
                   </td>
@@ -409,7 +409,8 @@ export default {
       const categoryMap = {}
 
       // Use a single neutral slate/gray color for all categories
-      const singleColor = '#64748b' // Neutral slate gray color
+      // Only consumed by :style on the h-bars, so a CSS variable string is safe here
+      const singleColor = 'var(--gray-500)' // Neutral slate gray color
 
       // Get SKUs from orders in the filtered time period
       const orderedSkus = new Set()
@@ -727,109 +728,126 @@ export default {
 </script>
 
 <style scoped>
+/* The global .page-header (App.vue) already provides spacing and title style;
+   only the flex row is page-specific, so a future actions slot lines up. */
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  gap: var(--space-4);
+  flex-wrap: wrap;
 }
 
 .header-meta {
-  font-size: 0.813rem;
-  color: #64748b;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
 }
 
 .kpi-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-6);
 }
 
 .section-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #475569;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 1rem;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-4);
 }
 
 .kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: var(--space-4);
 }
 
+/* KPI tiles mirror the global .stat-card look (same surface, radius, shadow, type scale). */
 .kpi-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xs);
+  padding: var(--space-6);
+  min-width: 0;
 }
 
 .kpi-header {
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-2);
 }
 
 .kpi-label {
-  font-size: 0.813rem;
-  font-weight: 600;
-  color: #64748b;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.04em;
 }
 
 .kpi-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.025em;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
 }
 
 .kpi-goal {
-  font-size: 0.813rem;
-  color: #64748b;
-  margin-bottom: 0.75rem;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
 }
 
 .kpi-progress-bar {
   width: 100%;
   height: 6px;
-  background: #f1f5f9;
-  border-radius: 3px;
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .kpi-progress {
   height: 100%;
-  background: #3b82f6;
-  border-radius: 3px;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
   transition: width 0.6s ease;
 }
 
 .kpi-progress.success {
-  background: #10b981;
+  background: var(--success-500);
 }
 
+/* auto-fit with a capped minimum collapses to one column on narrow screens
+   without needing a media query; min-width: 0 on the cards stops wide
+   content (tables) from stretching the grid track past the viewport. */
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.chart-card {
+  min-width: 0;
+  /* the grid gap provides the spacing; cancel the global .card margin */
+  margin-bottom: 0;
 }
 
 .chart-card.full-width {
   grid-column: 1 / -1;
 }
 
+/* .card already pads; the chart body needs no extra inset */
 .chart-content {
-  padding: 1rem;
+  padding: 0;
 }
 
 .donut-chart {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
+  gap: var(--space-12);
 }
 
 .donut-svg {
@@ -840,30 +858,32 @@ export default {
 .donut-legend {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  font-size: 0.875rem;
-  color: #475569;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
 }
 
 .legend-dot {
   width: 10px;
   height: 10px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
 }
 
 /* Order Health Dashboard Styles */
+/* Two columns when there is room; auto-fit stacks donut and metrics on phones.
+   min(100%, 200px) keeps the track from forcing the card wider than the viewport. */
 .order-health-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: var(--space-6);
   align-items: center;
-  padding: 1rem;
   min-height: 240px;
 }
 
@@ -872,114 +892,119 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 0 1rem;
+  gap: var(--space-4);
+  min-width: 0;
 }
 
 .donut-svg-compact {
   width: 200px;
-  height: 200px;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 1;
 }
 
 .donut-center-label {
-  font-size: 12px;
-  fill: #64748b;
-  font-weight: 500;
+  font-size: var(--text-xs);
+  fill: var(--color-text-muted);
+  font-weight: var(--weight-medium);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .donut-center-value {
-  font-size: 36px;
-  fill: #0f172a;
-  font-weight: 700;
+  font-size: 36px; /* SVG user units (viewBox 200); scales with the chart, not a UI text size */
+  fill: var(--color-text);
+  font-weight: var(--weight-semibold);
 }
 
 .donut-legend-compact {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.625rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2) var(--space-5);
 }
 
 .legend-item-compact {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  color: #475569;
-  font-weight: 500;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  font-weight: var(--weight-medium);
 }
 
 .order-health-metrics {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--space-5);
   justify-content: center;
   align-items: center;
+  min-width: 0;
 }
 
 .health-metric {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
+  gap: var(--space-1);
   text-align: center;
   width: 100%;
 }
 
 .health-metric-label {
-  font-size: 0.688rem;
-  color: #64748b;
-  font-weight: 600;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-weight: var(--weight-medium);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
 .health-metric-value {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.025em;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
 }
 
 .metric-good {
-  color: #10b981;
+  color: var(--success-600);
 }
 
 .metric-warning {
-  color: #f59e0b;
+  color: var(--warning-600);
 }
 
 .metric-bad {
-  color: #ef4444;
+  color: var(--danger-600);
 }
 
 .horizontal-bar-chart {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 0 1rem;
+  gap: var(--space-6);
 }
 
 .h-bar-item {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .h-bar-label {
   width: 120px;
   min-width: 120px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #475569;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
   flex-shrink: 0;
 }
 
 .h-bar-container {
   flex: 1;
+  min-width: 0;
   height: 32px;
-  background: #f8fafc;
-  border-radius: 6px;
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
   overflow: hidden;
 }
 
@@ -988,19 +1013,20 @@ export default {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-right: 0.75rem;
+  padding-right: var(--space-3);
   transition: width 0.6s ease;
 }
 
 .h-bar-value {
-  font-size: 0.813rem;
-  font-weight: 700;
-  color: white;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-surface);
+  white-space: nowrap;
 }
 
 .line-chart {
   display: flex;
-  gap: 1.5rem;
+  gap: var(--space-6);
   height: 280px;
 }
 
@@ -1008,10 +1034,10 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-right: 1rem;
-  font-size: 0.75rem;
-  color: #94a3b8;
-  border-right: 1px solid #e2e8f0;
+  padding-right: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+  border-right: 1px solid var(--color-border);
 }
 
 .line-chart-area {
@@ -1019,7 +1045,7 @@ export default {
   display: flex;
   align-items: flex-end;
   justify-content: space-around;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .line-bar-group {
@@ -1028,7 +1054,7 @@ export default {
   align-items: center;
   flex: 1;
   max-width: 80px;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .line-bar-wrapper {
@@ -1044,116 +1070,113 @@ export default {
   width: 100%;
   max-width: 60px;
   min-height: 8px;
-  background: #3b82f6;
-  border-radius: 6px 6px 0 0;
-  transition: all 0.3s ease;
+  background: var(--brand-500);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  transition: background-color var(--transition-base);
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
 .line-bar.empty-bar {
-  background: #e2e8f0;
-  box-shadow: none;
+  background: var(--color-border);
   min-height: 4px;
 }
 
 .line-bar:hover {
-  background: #2563eb;
-  transform: scaleY(1.05);
+  background: var(--color-primary);
 }
 
 .line-bar.empty-bar:hover {
-  background: #cbd5e1;
-  transform: none;
+  background: var(--color-border-strong);
 }
 
 .line-bar-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #64748b;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
   white-space: nowrap;
 }
 
 .no-data {
-  padding: 2rem;
+  padding: var(--space-8);
   text-align: center;
-  color: #94a3b8;
-  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
 }
 
 .no-backlog {
-  padding: 3rem;
+  padding: var(--space-12);
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .success-icon {
   width: 48px;
   height: 48px;
-  color: #10b981;
+  color: var(--success-500);
 }
 
 .no-backlog-text {
-  font-size: 1.125rem;
-  color: #10b981;
-  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--success-600);
+  font-weight: var(--weight-semibold);
   margin: 0;
 }
 
 .clickable-row {
   cursor: pointer;
-  transition: background-color 0.15s ease;
 }
 
+/* !important kept: it must beat the global tbody tr:hover background */
 .clickable-row:hover {
-  background: #eff6ff !important;
+  background: var(--color-primary-soft) !important;
 }
 
-/* Tasks Card Styles */
+/* Tasks Card Styles (currently unused by the template; tokenised for consistency) */
 .tasks-card {
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-8);
 }
 
 .tasks-content {
-  padding: 1.5rem;
+  padding: var(--space-6);
 }
 
 .task-input-container {
   display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
 }
 
 .task-input {
   flex: 1;
-  padding: 0.75rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  transition: border-color 0.2s ease;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  transition: border-color var(--transition-fast);
 }
 
 .task-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
 }
 
 .task-add-btn {
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  padding: var(--space-3) var(--space-6);
+  background: var(--color-primary);
+  color: var(--color-surface);
   border: none;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: var(--radius-md);
+  font-weight: var(--weight-medium);
   cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: background-color var(--transition-fast);
 }
 
 .task-add-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
+  background: var(--color-primary-hover);
 }
 
 .task-add-btn:disabled {
@@ -1163,31 +1186,31 @@ export default {
 
 .no-tasks {
   text-align: center;
-  padding: 2rem;
-  color: #64748b;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
   font-style: italic;
 }
 
 .tasks-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .task-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  background: #f8fafc;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  transition: all 0.2s ease;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid transparent;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .task-item:hover {
-  border-color: #e2e8f0;
-  background: white;
+  border-color: var(--color-border);
+  background: var(--color-surface);
 }
 
 .task-item.completed {
@@ -1196,35 +1219,35 @@ export default {
 
 .task-item.completed .task-text {
   text-decoration: line-through;
-  color: #94a3b8;
+  color: var(--color-text-subtle);
 }
 
 .task-checkbox {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #667eea;
+  accent-color: var(--color-primary);
 }
 
 .task-text {
   flex: 1;
   cursor: pointer;
   user-select: none;
-  color: #0f172a;
-  font-size: 0.95rem;
+  color: var(--color-text);
+  font-size: var(--text-base);
 }
 
 .task-delete-btn {
   width: 28px;
   height: 28px;
-  background: #ef4444;
-  color: white;
+  background: var(--danger-500);
+  color: var(--color-surface);
   border: none;
-  border-radius: 6px;
-  font-size: 1.25rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-lg);
   line-height: 1;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1232,40 +1255,44 @@ export default {
 }
 
 .task-delete-btn:hover {
-  background: #dc2626;
-  transform: scale(1.1);
+  background: var(--danger-600);
 }
 
+/* Create / View PO buttons: 32px small-button spec */
 .po-button {
-  padding: 0.5rem 1rem;
+  height: 32px;
+  padding: 0 var(--space-3);
   border: none;
-  border-radius: 6px;
-  font-size: 0.813rem;
-  font-weight: 600;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color var(--transition-fast);
   white-space: nowrap;
 }
 
+.po-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 .po-button.create {
-  background: #3b82f6;
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-surface);
 }
 
 .po-button.create:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+  background: var(--color-primary-hover);
 }
 
 .po-button.view {
-  background: #64748b;
-  color: white;
+  background: var(--color-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-strong);
 }
 
 .po-button.view:hover {
-  background: #475569;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(100, 116, 139, 0.3);
+  background: var(--color-surface-muted);
 }
 </style>

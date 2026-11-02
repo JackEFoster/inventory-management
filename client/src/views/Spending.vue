@@ -492,80 +492,98 @@ export default {
 </script>
 
 <style scoped>
+/* Local chart palette. Series keep their original hues; purple has no token in the
+   set, so --chart-series-operational is the one raw value (violet-500). */
+.spending {
+  --chart-series-procurement: var(--brand-500);
+  --chart-series-operational: #8b5cf6;
+  --chart-series-labor: var(--success-500);
+  --chart-series-overhead: var(--warning-500);
+  --chart-series-revenue: var(--gray-900);
+  --chart-series-cost: var(--danger-500);
+}
+
 .stat-change {
-  margin-top: 0.75rem;
-  font-size: 0.875rem;
+  margin-top: var(--space-3);
+  font-size: var(--text-base);
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: var(--space-1);
 }
 
 .stat-change.positive {
-  color: #059669;
+  color: var(--success-600);
 }
 
 .stat-change.negative {
-  color: #dc2626;
+  color: var(--danger-600);
 }
 
 .change-icon {
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: var(--weight-bold);
+  font-size: var(--text-md);
 }
 
 .chart-card {
-  margin-bottom: 1.75rem;
+  margin-bottom: var(--space-6);
+}
+
+/* card headers wrap on narrow screens so the legend drops under the title */
+.chart-card .card-header {
+  flex-wrap: wrap;
 }
 
 .chart-legend {
   display: flex;
-  gap: 1.5rem;
-  font-size: 0.875rem;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: #64748b;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
 }
 
 .legend-dot {
   width: 12px;
   height: 12px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
 }
 
-.legend-dot.procurement { background: #3b82f6; }
-.legend-dot.operational { background: #8b5cf6; }
-.legend-dot.labor { background: #10b981; }
-.legend-dot.overhead { background: #f59e0b; }
-.legend-dot.revenue-color { background: #0f172a; }
-.legend-dot.cost-color { background: #ef4444; }
+.legend-dot.procurement { background: var(--chart-series-procurement); }
+.legend-dot.operational { background: var(--chart-series-operational); }
+.legend-dot.labor { background: var(--chart-series-labor); }
+.legend-dot.overhead { background: var(--chart-series-overhead); }
+.legend-dot.revenue-color { background: var(--chart-series-revenue); }
+.legend-dot.cost-color { background: var(--chart-series-cost); }
 
+/* same layout as the shared .stats-grid; kept as its own class because the template uses it */
 .stats-grid-finance {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 
 .revenue-card {
-  border-left: 4px solid #0f172a;
+  border-left: 4px solid var(--chart-series-revenue);
 }
 
 .cost-card {
-  border-left: 4px solid #ef4444;
+  border-left: 4px solid var(--chart-series-cost);
 }
 
 .profit-card {
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid var(--chart-series-procurement);
 }
 
 .stat-meta {
-  margin-top: 0.5rem;
-  font-size: 0.813rem;
-  color: #64748b;
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
 }
 
 .bar-group-revenue {
@@ -580,42 +598,41 @@ export default {
   width: 100%;
   max-width: 80px;
   display: flex;
-  gap: 6px;
+  gap: var(--space-1);
   justify-content: center;
   align-items: flex-end;
   height: 100%;
-  padding-bottom: 2rem;
+  padding-bottom: var(--space-8);
 }
 
 .revenue-bar, .cost-bar {
   width: 50%;
   max-width: 30px;
-  border-radius: 6px 6px 0 0;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  transition: opacity var(--transition-base);
   cursor: pointer;
   min-height: 4px;
 }
 
 .revenue-bar {
-  background: #0f172a;
+  background: var(--chart-series-revenue);
 }
 
 .cost-bar {
-  background: #ef4444;
+  background: var(--chart-series-cost);
 }
 
 .revenue-bar:hover, .cost-bar:hover {
   opacity: 0.8;
-  transform: scaleY(1.05);
 }
 
 .chart-container {
-  padding: 1.5rem 0;
+  padding: var(--space-4) 0;
 }
 
 .bar-chart {
   display: flex;
-  gap: 1.5rem;
+  gap: var(--space-4);
   height: 350px;
 }
 
@@ -623,18 +640,19 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-right: 1rem;
-  font-size: 0.75rem;
-  color: #94a3b8;
-  border-right: 1px solid #e2e8f0;
+  padding-right: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  border-right: 1px solid var(--color-border);
 }
 
 .chart-area {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: flex-end;
   justify-content: space-around;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .bar-group {
@@ -642,6 +660,7 @@ export default {
   flex-direction: column;
   align-items: center;
   flex: 1;
+  min-width: 0;
   height: 100%;
 }
 
@@ -652,9 +671,9 @@ export default {
   flex-direction: column-reverse;
   align-items: stretch;
   height: 100%;
-  padding-bottom: 2rem;
+  padding-bottom: var(--space-8);
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--transition-base);
 }
 
 .stacked-bar:hover {
@@ -663,190 +682,193 @@ export default {
 
 .bar-segment {
   width: 100%;
-  transition: all 0.3s ease;
+  transition: opacity var(--transition-base);
   cursor: pointer;
   display: block;
 }
 
 .bar-segment:first-child {
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
 .bar-segment:last-child {
-  border-radius: 6px 6px 0 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
-.bar-segment.procurement { background: #3b82f6; }
-.bar-segment.operational { background: #8b5cf6; }
-.bar-segment.labor { background: #10b981; }
-.bar-segment.overhead { background: #f59e0b; }
+.bar-segment.procurement { background: var(--chart-series-procurement); }
+.bar-segment.operational { background: var(--chart-series-operational); }
+.bar-segment.labor { background: var(--chart-series-labor); }
+.bar-segment.overhead { background: var(--chart-series-overhead); }
 
 .bar-segment:hover {
   opacity: 0.8;
 }
 
 .bar-label {
-  margin-top: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #64748b;
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
 }
 
+/* min(100%, 450px) lets the columns collapse to one at phone width instead of overflowing */
 .two-column-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-  gap: 1.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 450px), 1fr));
+  gap: var(--space-6);
 }
 
 .category-list {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: var(--space-6);
 }
 
 .category-item {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .category-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--space-4);
 }
 
 .category-name {
-  font-weight: 600;
-  color: #0f172a;
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
 }
 
 .category-amount {
-  font-weight: 700;
-  color: #2563eb;
-  font-size: 1.125rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
 }
 
+/* 6px track per polish.md progress bars */
 .category-bar-container {
   width: 100%;
-  height: 8px;
-  background: #f1f5f9;
-  border-radius: 4px;
+  height: 6px;
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
 .category-bar {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
-  border-radius: 4px;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
   transition: width 0.6s ease;
 }
 
 .category-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.813rem;
+  font-size: var(--text-sm);
 }
 
 .percentage {
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .change {
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
 }
 
 .change.positive {
-  color: #059669;
+  color: var(--success-600);
 }
 
 .change.negative {
-  color: #dc2626;
+  color: var(--danger-600);
 }
 
 .transactions-card {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
+/* Scroll box: vertical scroll after 400px, horizontal scroll inside the card on phones.
+   The sticky header keeps working because this box is the scroll container. */
 .transactions-table-container {
-  overflow-y: auto;
+  overflow: auto;
   max-height: 400px;
 }
 
-.transactions-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
+/* th/td/thead styling comes from the global table styles in App.vue; only sticky behaviour
+   and the opaque background (rows scroll beneath it) live here */
 .transactions-table thead {
   position: sticky;
   top: 0;
-  background: #f8fafc;
+  background: var(--color-surface-muted);
   z-index: 1;
 }
 
-.transactions-table th {
-  text-align: left;
-  padding: 0.625rem 0.75rem;
-  font-weight: 600;
-  color: #475569;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.transactions-table th.text-right {
-  text-align: right;
-}
-
 .transactions-table td {
-  padding: 0.75rem 0.75rem;
-  border-bottom: 1px solid #f1f5f9;
-  font-size: 0.875rem;
+  /* tabular rows are denser than the global 46px */
+  height: auto;
 }
 
 .transactions-table tbody tr {
   cursor: pointer;
-  transition: background-color 0.15s ease;
-}
-
-.transactions-table tbody tr:hover {
-  background: #f8fafc;
 }
 
 .transactions-table tbody tr.clickable-row:hover {
-  background: #eff6ff;
+  background: var(--color-primary-soft);
 }
 
 .transaction-id {
-  color: #64748b;
-  font-weight: 500;
-  font-family: 'Monaco', 'Courier New', monospace;
-  font-size: 0.813rem;
+  color: var(--color-text-muted);
+  font-weight: var(--weight-medium);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
 }
 
 .transaction-description {
-  color: #0f172a;
-  font-weight: 500;
+  color: var(--color-text);
+  font-weight: var(--weight-medium);
 }
 
 .transaction-vendor {
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .transaction-date {
-  color: #64748b;
-  font-size: 0.813rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  white-space: nowrap;
 }
 
 .transaction-amount {
-  font-weight: 700;
-  color: #0f172a;
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
 }
 
 .text-right {
   text-align: right;
+}
+
+/* 12 month columns do not fit a phone: give each a minimum width and scroll the chart
+   area inside the card instead of letting the page overflow */
+@media (max-width: 640px) {
+  .bar-chart {
+    gap: var(--space-2);
+  }
+
+  .chart-area {
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .bar-group,
+  .bar-group-revenue {
+    flex: 0 0 40px;
+  }
 }
 </style>
