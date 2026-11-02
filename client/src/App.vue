@@ -33,7 +33,7 @@
         </router-link>
         <router-link to="/reports" class="nav-item" :class="{ active: $route.path === '/reports' }">
           <NavIcon name="reports" class="nav-icon" />
-          <span class="nav-label">Reports</span>
+          <span class="nav-label">{{ t('nav.reports') }}</span>
         </router-link>
       </nav>
     </aside>
