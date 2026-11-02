@@ -6,6 +6,7 @@ export default {
     orders: 'Orders',
     finance: 'Finance',
     demandForecast: 'Demand Forecast',
+    restocking: 'Restocking',
     companyName: 'Catalyst Components',
     subtitle: 'Inventory Management System'
   },
@@ -106,6 +107,18 @@ export default {
     title: 'Orders',
     description: 'View and manage customer orders',
     allOrders: 'All Orders',
+    submittedOrders: 'Submitted Orders',
+    submittedOrdersEmpty: 'No restocking orders submitted yet. Place one from the Restocking tab.',
+    submittedDate: 'Submitted',
+    leadTime: 'Lead Time',
+    leadTimeDays: '{days} days',
+    leadTimeDayOne: '1 day',
+    eta: 'Expected',
+    etaRemaining: '{days} days left',
+    etaRemainingOne: '1 day left',
+    etaToday: 'Due today',
+    etaOverdue: 'Overdue',
+    submittedOrdersError: 'Failed to load submitted orders',
     totalOrders: 'Total Orders',
     totalRevenue: 'Total Revenue',
     avgOrderValue: 'Avg Order Value',
@@ -188,6 +201,41 @@ export default {
     }
   },
 
+  // Restocking
+  restocking: {
+    title: 'Restocking',
+    description: 'Pick forecasted items to reorder within a budget',
+    budget: 'Budget',
+    budgetHint: 'Drag to change the budget. Recommended items are selected to fill it.',
+    recommendations: 'Recommended Items',
+    noRecommendations: 'No forecast items fit this budget.',
+    selected: 'Selected',
+    selectedTotal: 'Selected Total',
+    overBudget: 'Over budget by {amount}',
+    remaining: '{amount} remaining',
+    longestLead: 'Longest Lead Time',
+    expectedDelivery: 'Expected Delivery',
+    placeOrder: 'Place Order',
+    placing: 'Placing...',
+    orderPlaced: 'Order {orderNumber} submitted. Expected delivery in {days} days.',
+    viewOrders: 'View in Orders',
+    selectAll: 'Select all',
+    table: {
+      select: 'Select',
+      sku: 'SKU',
+      itemName: 'Item Name',
+      trend: 'Trend',
+      unitCost: 'Unit Cost',
+      quantity: 'Qty',
+      lineTotal: 'Line Total',
+      leadTime: 'Lead Time'
+    },
+    errors: {
+      load: 'Failed to load forecast data',
+      submit: 'Failed to place order'
+    }
+  },
+
   // Filters
   filters: {
     timePeriod: 'Time Period',
@@ -204,6 +252,7 @@ export default {
     shipped: 'Shipped',
     processing: 'Processing',
     backordered: 'Backordered',
+    submitted: 'Submitted',
     inStock: 'In Stock',
     lowStock: 'Low Stock',
     adequate: 'Adequate'

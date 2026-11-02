@@ -6,6 +6,7 @@ export default {
     orders: '注文',
     finance: '財務',
     demandForecast: '需要予測',
+    restocking: '補充発注',
     companyName: '触媒コンポーネンツ',
     subtitle: '在庫管理システム'
   },
@@ -106,6 +107,18 @@ export default {
     title: '注文',
     description: '顧客注文の表示と管理',
     allOrders: 'すべての注文',
+    submittedOrders: '提出済み発注',
+    submittedOrdersEmpty: '補充発注はまだ提出されていません。補充発注タブから発注してください。',
+    submittedDate: '提出日',
+    leadTime: 'リードタイム',
+    leadTimeDays: '{days}日',
+    leadTimeDayOne: '1日',
+    eta: '入荷予定',
+    etaRemaining: 'あと{days}日',
+    etaRemainingOne: 'あと1日',
+    etaToday: '本日入荷予定',
+    etaOverdue: '遅延',
+    submittedOrdersError: '提出済み発注の読み込みに失敗しました',
     totalOrders: '総注文数',
     totalRevenue: '総収益',
     avgOrderValue: '平均注文額',
@@ -188,6 +201,41 @@ export default {
     }
   },
 
+  // Restocking
+  restocking: {
+    title: '補充発注',
+    description: '需要予測の品目を予算内で発注します',
+    budget: '予算',
+    budgetHint: 'スライダーで予算を変更します。推奨品目が予算内で選択されます。',
+    recommendations: '推奨品目',
+    noRecommendations: 'この予算に収まる需要予測品目はありません。',
+    selected: '選択中',
+    selectedTotal: '選択合計',
+    overBudget: '予算を{amount}超過',
+    remaining: '残り{amount}',
+    longestLead: '最長リードタイム',
+    expectedDelivery: '入荷予定日',
+    placeOrder: '発注する',
+    placing: '発注中...',
+    orderPlaced: '発注 {orderNumber} を受け付けました。入荷予定は{days}日後です。',
+    viewOrders: '注文一覧で確認',
+    selectAll: 'すべて選択',
+    table: {
+      select: '選択',
+      sku: 'SKU',
+      itemName: '品目名',
+      trend: 'トレンド',
+      unitCost: '単価',
+      quantity: '数量',
+      lineTotal: '小計',
+      leadTime: 'リードタイム'
+    },
+    errors: {
+      load: '需要予測データの読み込みに失敗しました',
+      submit: '発注に失敗しました'
+    }
+  },
+
   // Filters
   filters: {
     timePeriod: '期間',
@@ -204,6 +252,7 @@ export default {
     shipped: '出荷済み',
     processing: '処理中',
     backordered: 'バックオーダー',
+    submitted: '提出済み',
     inStock: '在庫あり',
     lowStock: '在庫僅少',
     adequate: '適量'
