@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import math
-from typing import List, Optional
+from typing import List, Literal, Optional
 from datetime import datetime, timedelta
 from pydantic import BaseModel, Field
 from mock_data import inventory_items, orders, demand_forecasts, backlog_items, spending_summary, monthly_spending, category_spending, recent_transactions, purchase_orders
@@ -164,6 +164,58 @@ restocking_orders: List[dict] = []
 @app.get("/")
 def root():
     return {"message": "Factory Inventory Management System API", "version": "1.0.0"}
+
+# --- Tasks (header Tasks modal: client/src/App.vue + api.js) ---
+# Field names mirror the client contract (camelCase dueDate). IDs are strings
+# ("task-N") so they never collide with the numeric mock tasks in useAuth.js,
+# which App.vue checks first when deleting or toggling.
+class Task(BaseModel):
+    id: str
+    title: str
+    priority: str
+    dueDate: str
+    status: str = "pending"
+
+class CreateTaskRequest(BaseModel):
+    title: str = Field(min_length=1, max_length=200)
+    priority: Literal["high", "medium", "low"] = "medium"
+    dueDate: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
+
+tasks: List[dict] = []
+_task_seq = 0
+
+def _find_task(task_id: str) -> dict:
+    task = next((t for t in tasks if t["id"] == task_id), None)
+    if not task:
+        raise HTTPException(status_code=404, detail=f"Task {task_id} not found")
+    return task
+
+@app.get("/api/tasks", response_model=List[Task])
+def get_tasks():
+    """Get user-created tasks, newest first (the client prepends new ones)"""
+    return list(reversed(tasks))
+
+@app.post("/api/tasks", response_model=Task, status_code=201)
+def create_task(request: CreateTaskRequest):
+    """Create a task"""
+    global _task_seq
+    _task_seq += 1  # monotonic, so IDs are never reused after a delete
+    task = {"id": f"task-{_task_seq}", **request.model_dump(), "status": "pending"}
+    tasks.append(task)
+    return task
+
+@app.patch("/api/tasks/{task_id}", response_model=Task)
+def toggle_task(task_id: str):
+    """Toggle a task between pending and completed (the client sends no body)"""
+    task = _find_task(task_id)
+    task["status"] = "completed" if task["status"] == "pending" else "pending"
+    return task
+
+@app.delete("/api/tasks/{task_id}")
+def delete_task(task_id: str):
+    """Delete a task"""
+    tasks.remove(_find_task(task_id))
+    return {"deleted": task_id}
 
 @app.get("/api/inventory", response_model=List[InventoryItem])
 def get_inventory(
