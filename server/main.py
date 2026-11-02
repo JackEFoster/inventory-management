@@ -1,7 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import math
 from typing import List, Optional
-from pydantic import BaseModel
+from datetime import datetime, timedelta
+from pydantic import BaseModel, Field
 from mock_data import inventory_items, orders, demand_forecasts, backlog_items, spending_summary, monthly_spending, category_spending, recent_transactions, purchase_orders
 
 app = FastAPI(title="Factory Inventory Management System")
@@ -89,6 +91,9 @@ class DemandForecast(BaseModel):
     forecasted_demand: int
     trend: str
     period: str
+    # Restocking fields; optional so older data files still validate
+    unit_cost: Optional[float] = None
+    lead_time_days: Optional[int] = None
 
 class BacklogItem(BaseModel):
     id: str
@@ -119,6 +124,41 @@ class CreatePurchaseOrderRequest(BaseModel):
     unit_cost: float
     expected_delivery_date: str
     notes: Optional[str] = None
+
+class RestockingOrderItemRequest(BaseModel):
+    sku: str
+    # Upper bound keeps float totals sane and rejects absurd values up front
+    quantity: int = Field(gt=0, le=1_000_000)
+
+class CreateRestockingOrderRequest(BaseModel):
+    items: List[RestockingOrderItemRequest]
+    # Deliberately unconstrained here: a Pydantic constraint on NaN puts the NaN
+    # into the 422 error body, which then fails JSON encoding and returns a 500.
+    # The endpoint validates it by hand instead and answers with a clean 400.
+    budget: Optional[float] = None
+
+class RestockingOrderItem(BaseModel):
+    sku: str
+    name: str
+    quantity: int
+    unit_cost: float
+    line_total: float
+    lead_time_days: int
+
+class RestockingOrder(BaseModel):
+    id: str
+    order_number: str
+    items: List[RestockingOrderItem]
+    total_value: float
+    budget: Optional[float] = None
+    lead_time_days: int
+    created_date: str
+    expected_delivery: str
+    status: str
+
+# Submitted restocking orders live in memory only (reset on server restart),
+# consistent with the rest of the mock-data backend.
+restocking_orders: List[dict] = []
 
 # API endpoints
 @app.get("/")
@@ -206,6 +246,75 @@ def get_dashboard_summary(
         "total_backlog_items": total_backlog_items,
         "total_orders_value": sum(order["total_value"] for order in filtered_orders)
     }
+
+@app.get("/api/restocking-orders", response_model=List[RestockingOrder])
+def get_restocking_orders():
+    """Get submitted restocking orders, newest first"""
+    return list(reversed(restocking_orders))
+
+@app.post("/api/restocking-orders", response_model=RestockingOrder, status_code=201)
+def create_restocking_order(request: CreateRestockingOrderRequest):
+    """Submit a restocking order for demand-forecast items.
+
+    Prices and lead times are looked up server-side from the forecast data,
+    so the client cannot set its own prices. The order's lead time is the
+    slowest item's lead time, since the order ships complete.
+    """
+    if not request.items:
+        raise HTTPException(status_code=400, detail="Order must contain at least one item")
+
+    # NaN would make the over-budget comparison always False and skip the check
+    if request.budget is not None and (not math.isfinite(request.budget) or request.budget < 0):
+        raise HTTPException(status_code=400, detail="Budget must be a non-negative number")
+
+    forecasts_by_sku = {f["item_sku"]: f for f in demand_forecasts}
+    line_items = []
+    seen_skus = set()
+
+    for req_item in request.items:
+        forecast = forecasts_by_sku.get(req_item.sku)
+        if not forecast or forecast.get("unit_cost") is None:
+            raise HTTPException(status_code=400, detail=f"Unknown or unpriced SKU: {req_item.sku}")
+        if req_item.quantity <= 0:
+            raise HTTPException(status_code=400, detail=f"Quantity for {req_item.sku} must be positive")
+        if req_item.sku in seen_skus:
+            raise HTTPException(status_code=400, detail=f"Duplicate SKU in order: {req_item.sku}")
+        seen_skus.add(req_item.sku)
+
+        unit_cost = forecast["unit_cost"]
+        line_items.append({
+            "sku": req_item.sku,
+            "name": forecast["item_name"],
+            "quantity": req_item.quantity,
+            "unit_cost": unit_cost,
+            "line_total": round(unit_cost * req_item.quantity, 2),
+            "lead_time_days": forecast.get("lead_time_days") or 0,
+        })
+
+    total_value = round(sum(item["line_total"] for item in line_items), 2)
+    if request.budget is not None and total_value > request.budget:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Order total {total_value:.2f} exceeds budget {request.budget:.2f}"
+        )
+
+    lead_time_days = max(item["lead_time_days"] for item in line_items)
+    now = datetime.now().replace(microsecond=0)
+    sequence = len(restocking_orders) + 1
+
+    order = {
+        "id": f"rst-{sequence}",
+        "order_number": f"RST-{now.year}-{sequence:04d}",
+        "items": line_items,
+        "total_value": total_value,
+        "budget": request.budget,
+        "lead_time_days": lead_time_days,
+        "created_date": now.isoformat(),
+        "expected_delivery": (now + timedelta(days=lead_time_days)).isoformat(),
+        "status": "Submitted",
+    }
+    restocking_orders.append(order)
+    return order
 
 @app.get("/api/spending/summary")
 def get_spending_summary():
