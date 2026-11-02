@@ -131,24 +131,22 @@ const getStockBadgeClass = (stockLevel) => {
 </script>
 
 <style scoped>
+/* Teleported to body, so it must sit on the shared modal layer */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  background: var(--color-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
-  padding: 1rem;
+  z-index: var(--z-modal);
+  padding: var(--space-4);
 }
 
 .modal-container {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  background: var(--color-surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
   max-width: 700px;
   width: 100%;
   max-height: 90vh;
@@ -161,158 +159,175 @@ const getStockBadgeClass = (stockLevel) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #0f172a;
-  letter-spacing: -0.025em;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  letter-spacing: -0.01em;
 }
 
 .close-button {
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--color-text-muted);
   cursor: pointer;
-  padding: 0.5rem;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  transition: all 0.15s ease;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .close-button:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+}
+
+.close-button:focus-visible,
+.btn-secondary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .modal-body {
   flex: 1;
   overflow-y: auto;
-  padding: 2rem;
+  padding: var(--space-6);
 }
 
+/* wraps so the badge drops under the title on phones instead of squeezing it */
 .product-header {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
-  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-6);
 }
 
 .product-icon {
   width: 64px;
   height: 64px;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  border-radius: 12px;
+  background: var(--color-primary);
+  border-radius: var(--radius-xl);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--color-surface);
   flex-shrink: 0;
 }
 
 .product-title-section {
   flex: 1;
-  min-width: 0;
+  min-width: 160px;
 }
 
 .product-name {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 0.5rem 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  margin: 0 0 var(--space-1) 0;
+  overflow-wrap: anywhere;
 }
 
 .product-sku {
-  font-size: 0.875rem;
-  color: #64748b;
-  font-family: 'Monaco', 'Courier New', monospace;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
 }
 
+/* Soft status pill, same recipe as the global .badge */
 .stock-badge {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-0-5) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
   text-transform: uppercase;
   letter-spacing: 0.025em;
   flex-shrink: 0;
 }
 
 .stock-badge.success {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-50);
+  color: var(--success-700);
 }
 
 .stock-badge.warning {
-  background: #fed7aa;
-  color: #92400e;
+  background: var(--warning-50);
+  color: var(--warning-700);
 }
 
 .stock-badge.danger {
-  background: #fecaca;
-  color: #991b1b;
+  background: var(--danger-50);
+  color: var(--danger-700);
 }
 
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: var(--space-6);
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-1);
+  min-width: 0;
 }
 
 .info-label {
-  font-size: 0.813rem;
-  font-weight: 600;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #64748b;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
 }
 
 .info-value {
-  font-size: 0.938rem;
-  color: #0f172a;
-  font-weight: 500;
+  font-size: var(--text-base);
+  color: var(--color-text);
+  font-weight: var(--weight-medium);
+  overflow-wrap: anywhere;
 }
 
 .modal-footer {
-  padding: 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: flex-end;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .btn-secondary {
-  padding: 0.625rem 1.25rem;
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  color: #334155;
+  height: 36px;
+  padding: 0 var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-base);
+  color: var(--color-text);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background-color var(--transition-fast);
   font-family: inherit;
 }
 
 .btn-secondary:hover {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
+  background: var(--color-surface-muted);
 }
 
-/* Modal transition animations */
+/* Modal transition animations (opacity on the overlay, transform on the panel) */
 .modal-enter-active,
 .modal-leave-active {
   transition: opacity 0.2s ease;

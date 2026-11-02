@@ -225,32 +225,16 @@ export default {
 </script>
 
 <style scoped>
-.page-header {
-  margin-bottom: 1.5rem;
-}
+/* .page-header, .card-header, .card-title, .loading and .error come from the
+   global styles in App.vue; only page-specific rules live here. */
 
-.page-header h2 {
-  margin-bottom: 0.25rem;
-}
-
-.page-header p {
-  color: #64748b;
-  font-size: 0.875rem;
-}
-
+/* Header wraps so the title keeps its own line and the search drops below on
+   narrow screens instead of squeezing the title or overflowing the card. */
 .card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
 }
 
 .card-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #0f172a;
   margin: 0;
 }
 
@@ -259,57 +243,76 @@ export default {
   display: flex;
   align-items: center;
   min-width: 300px;
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .card-header .card-title {
+    flex: 1 1 100%;
+  }
+
+  .search-box {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
 }
 
 .search-icon {
   position: absolute;
-  left: 0.75rem;
+  left: var(--space-3);
   width: 18px;
   height: 18px;
-  color: #94a3b8;
+  color: var(--color-text-subtle);
   pointer-events: none;
 }
 
 .search-input {
   width: 100%;
-  padding: 0.5rem 2.5rem 0.5rem 2.5rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  color: #0f172a;
-  background: #f8fafc;
-  transition: all 0.2s;
+  height: 36px;
+  /* left/right room for the search icon and the clear button */
+  padding: 0 var(--space-10);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-surface);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #3b82f6;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
 }
 
 .search-input::placeholder {
-  color: #94a3b8;
+  color: var(--color-text-subtle);
 }
 
 .clear-search {
   position: absolute;
-  right: 0.5rem;
+  right: var(--space-2);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem;
+  padding: var(--space-1);
   background: transparent;
   border: none;
-  border-radius: 4px;
-  color: #94a3b8;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-subtle);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
 }
 
 .clear-search:hover {
-  background: #e2e8f0;
-  color: #64748b;
+  background: var(--color-surface-muted);
+  color: var(--color-text-muted);
+}
+
+.clear-search:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .clear-search svg {
@@ -317,23 +320,11 @@ export default {
   height: 18px;
 }
 
-.loading,
-.error {
-  padding: 2rem;
-  text-align: center;
-  color: #64748b;
-}
-
-.error {
-  color: #ef4444;
-}
-
 .clickable-row {
   cursor: pointer;
-  transition: background-color 0.15s ease;
 }
 
 .clickable-row:hover {
-  background: #eff6ff !important;
+  background: var(--color-bg) !important;
 }
 </style>
