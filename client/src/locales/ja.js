@@ -57,7 +57,10 @@ export default {
       daysDelayed: '遅延日数',
       priority: '優先度',
       unitsShort: '単位不足',
-      days: '日'
+      days: '日',
+      actions: '操作',
+      createPO: '発注書を作成',
+      viewPO: '発注書を表示'
     },
     topProducts: {
       title: '収益別トップ製品',
@@ -236,6 +239,45 @@ export default {
     errors: {
       load: '需要予測データの読み込みに失敗しました',
       submit: '発注に失敗しました'
+    }
+  },
+
+  // Purchase orders (Dashboard shortages table)
+  purchaseOrder: {
+    createTitle: '発注書の作成',
+    viewTitle: '発注書',
+    close: 'ダイアログを閉じる',
+    shortage: '不足数',
+    units: '個',
+    supplierName: '仕入先',
+    supplierPlaceholder: '例: アクメ工業資材',
+    quantity: '数量',
+    unitCost: '単価（USD）',
+    expectedDeliveryDate: '入荷予定日',
+    notes: '備考',
+    optional: '任意',
+    total: '合計',
+    poNumber: '発注書番号',
+    status: 'ステータス',
+    createdDate: '作成日',
+    noNotes: '備考なし',
+    submit: '発注書を作成',
+    submitting: '作成中...',
+    loading: '発注書を読み込み中...',
+    statuses: {
+      Submitted: '発注済み'
+    },
+    validation: {
+      supplierRequired: '仕入先を入力してください',
+      quantityInvalid: '数量は1以上の整数で入力してください',
+      unitCostInvalid: '単価は0以上で入力してください',
+      dateRequired: '入荷予定日を選択してください'
+    },
+    errors: {
+      load: '発注書の読み込みに失敗しました',
+      submit: '発注書の作成に失敗しました',
+      duplicate: 'この品目の発注書は既に作成されています',
+      notFound: '対象のバックログ品目が見つかりません'
     }
   },
 
