@@ -56,7 +56,10 @@ export default {
       daysDelayed: 'Days Delayed',
       priority: 'Priority',
       unitsShort: 'units short',
-      days: 'days'
+      days: 'days',
+      actions: 'Actions',
+      createPO: 'Create PO',
+      viewPO: 'View PO'
     },
     topProducts: {
       title: 'Top Products by Revenue',
@@ -233,6 +236,45 @@ export default {
     errors: {
       load: 'Failed to load forecast data',
       submit: 'Failed to place order'
+    }
+  },
+
+  // Purchase orders (Dashboard shortages table)
+  purchaseOrder: {
+    createTitle: 'Create Purchase Order',
+    viewTitle: 'Purchase Order',
+    close: 'Close dialog',
+    shortage: 'Shortage',
+    units: 'units',
+    supplierName: 'Supplier',
+    supplierPlaceholder: 'e.g. Acme Industrial Supply',
+    quantity: 'Quantity',
+    unitCost: 'Unit Cost (USD)',
+    expectedDeliveryDate: 'Expected Delivery',
+    notes: 'Notes',
+    optional: 'optional',
+    total: 'Total',
+    poNumber: 'PO Number',
+    status: 'Status',
+    createdDate: 'Created',
+    noNotes: 'No notes',
+    submit: 'Create Purchase Order',
+    submitting: 'Creating...',
+    loading: 'Loading purchase order...',
+    statuses: {
+      Submitted: 'Submitted'
+    },
+    validation: {
+      supplierRequired: 'Enter a supplier name',
+      quantityInvalid: 'Quantity must be a whole number greater than 0',
+      unitCostInvalid: 'Unit cost must be 0 or more',
+      dateRequired: 'Choose an expected delivery date'
+    },
+    errors: {
+      load: 'Failed to load the purchase order',
+      submit: 'Failed to create the purchase order',
+      duplicate: 'A purchase order already exists for this item',
+      notFound: 'This backlog item no longer exists'
     }
   },
 
