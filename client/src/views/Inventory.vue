@@ -42,6 +42,22 @@
               </svg>
             </button>
           </div>
+          <button
+            type="button"
+            class="export-btn"
+            :disabled="filteredItems.length === 0"
+            :title="t('inventory.exportCsvHint')"
+            @click="exportCsv"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path
+                fill-rule="evenodd"
+                d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            {{ t('inventory.exportCsv') }}
+          </button>
         </div>
         <div class="table-container">
           <table>
@@ -104,6 +120,7 @@ import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
 import InventoryDetailModal from '../components/InventoryDetailModal.vue'
+import { toCsv, downloadCsv } from '../utils/csv'
 
 export default {
   name: 'Inventory',
@@ -214,6 +231,36 @@ export default {
       showItemModal.value = true
     }
 
+    // Export exactly what the table shows (global filters + search, same sort).
+    // Text columns match the on-screen translations; numeric columns stay raw
+    // (no currency symbol or thousands separators) so spreadsheets can sum them.
+    const exportCsv = () => {
+      const headers = [
+        t('inventory.table.sku'),
+        t('inventory.table.itemName'),
+        t('inventory.table.category'),
+        t('inventory.table.quantityOnHand'),
+        t('inventory.table.reorderPoint'),
+        t('inventory.table.unitCost'),
+        t('inventory.table.totalValue'),
+        t('inventory.table.location'),
+        t('inventory.table.status')
+      ]
+      const rows = filteredItems.value.map((item) => [
+        item.sku,
+        translateProductName(item.name),
+        translateCategory(item.category),
+        item.quantity_on_hand,
+        item.reorder_point,
+        item.unit_cost.toFixed(2),
+        (item.quantity_on_hand * item.unit_cost).toFixed(2),
+        translateWarehouse(item.location),
+        getStockStatus(item)
+      ])
+      const date = new Date().toISOString().slice(0, 10)
+      downloadCsv(`inventory-${date}.csv`, toCsv(headers, rows))
+    }
+
     onMounted(loadInventory)
 
     return {
@@ -229,6 +276,7 @@ export default {
       showItemModal,
       selectedItem,
       showItemDetail,
+      exportCsv,
       currencySymbol,
       translateProductName,
       translateWarehouse
@@ -335,6 +383,45 @@ export default {
 .clear-search svg {
   width: 18px;
   height: 18px;
+}
+
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-base);
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.export-btn svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-muted);
+}
+
+.export-btn:hover:not(:disabled) {
+  background: var(--color-surface-muted);
+}
+
+.export-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.export-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .clickable-row {
